@@ -1,0 +1,76 @@
+{
+  "name": "Custom Radio",
+  "version": "1.0.0",
+  "customSounds": [
+    {
+      "name": "mus_radio_11_metal_2",
+      "type": "mod_sfx_radio",
+      "file": "this_ffffire.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_abandoned_land",
+      "type": "mod_sfx_radio",
+      "file": "this_ffffire.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_acid_breather",
+      "type": "mod_sfx_radio",
+      "file": "oiftRT1xjrU.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_black_concrete",
+      "type": "mod_sfx_radio",
+      "file": "oiftRT1xjrU.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_finis",
+      "type": "mod_sfx_radio",
+      "file": "i_want_to_stay_at_your_house.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_fueled_by_poison",
+      "type": "mod_sfx_radio",
+      "file": "i_want_to_stay_at_your_house.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_future_drags",
+      "type": "mod_sfx_radio",
+      "file": "whos_ready.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_i_wont_let_you_go",
+      "type": "mod_sfx_radio",
+      "file": "whos_ready.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_kevin",
+      "type": "mod_sfx_radio",
+      "file": "spoiler.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_march30",
+      "type": "mod_sfx_radio",
+      "file": "spoiler.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_scum",
+      "type": "mod_sfx_radio",
+      "file": "the_rebel_path.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_the_loop",
+      "type": "mod_sfx_radio",
+      "file": "the_rebel_path.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_theaccursed",
+      "type": "mod_sfx_radio",
+      "file": "been_good_to_know_ya.wav"
+    },
+    {
+      "name": "mus_radio_11_metal_zurawie",
+      "type": "mod_sfx_radio",
+      "file": "been_good_to_know_ya.wav"
+    }
+  ]
+}
