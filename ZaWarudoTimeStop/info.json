@@ -1,0 +1,20 @@
+{
+  "name": "ZA WARUDO",
+  "version": "1.0.0",
+  "customSounds": [
+    {
+      "name": "time_dilation_sandevistan_enter",
+      "type": "mod_sfx_2d",
+      "file": "za_warudo_toki_wo_tomare.wav",
+      "gain": 1.0,
+      "pitch": 0.0
+    },
+    {
+      "name": "time_dilation_sandevistan_exit",
+      "type": "mod_sfx_2d",
+      "file": "toki_wa_ugokidasu.wav",
+      "gain": 1.0,
+      "pitch": 0.0
+    }
+  ]
+}

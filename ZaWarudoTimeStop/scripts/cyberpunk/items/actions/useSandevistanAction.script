@@ -1,0 +1,55 @@
+class UseSandevistanAction extends UseAction
+{
+
+	public override function StartAction( gameInstance : GameInstance )
+	{
+		var psmEvent : PSMPostponedParameterBool;
+		var player : PlayerPuppet;
+		var itemID : ItemID;
+		var statsSystem : StatsSystem;
+		var statsID : StatsObjectID;
+		player = ( ( PlayerPuppet )( GetExecutor() ) );
+		super.StartAction( gameInstance );
+		if( player )
+		{
+			itemID = GetItemData().GetID();
+			GameInstance.GetTelemetrySystem( gameInstance ).LogActiveCyberwareUsed( player, itemID );
+			statsID = ( ( StatsObjectID )( itemID ) );
+			statsSystem = GameInstance.GetStatsSystem( player.GetGame() );
+			statsSystem.RemoveAllModifiers( statsID, gamedataStatType.TimeDilationSandevistanDuration, true );
+			statsSystem.RemoveAllModifiers( statsID, gamedataStatType.TimeDilationSandevistanDuration, false );
+			statsSystem.AddModifier( statsID, RPGManager.CreateStatModifier( gamedataStatType.TimeDilationSandevistanDuration, gameStatModifierType.Multiplier, 999.0 ) );
+			psmEvent = new PSMPostponedParameterBool;
+			psmEvent.value = true;
+			psmEvent.id = 'requestSandevistanActivation';
+			player.QueueEvent( psmEvent );
+			player.IconicCyberwareActivated();
+		}
+	}
+
+}
+
+class DisableSandevistanAction extends UseAction
+{
+
+	public override function StartAction( gameInstance : GameInstance )
+	{
+		var psmEvent : PSMPostponedParameterBool;
+		var player : PlayerPuppet;
+		player = ( ( PlayerPuppet )( GetExecutor() ) );
+		super.StartAction( gameInstance );
+		if( player )
+		{
+			if( GameInstance.GetStatusEffectSystem( player.GetGame() ).HasStatusEffect( player.GetEntityID(), T"BaseStatusEffect.PlayerInFinisherWorkspot" ) )
+			{
+				return;
+			}
+			psmEvent = new PSMPostponedParameterBool;
+			psmEvent.id = 'requestSandevistanDeactivation';
+			psmEvent.value = true;
+			player.QueueEvent( psmEvent );
+			StatusEffectHelper.RemoveStatusEffect( player, T"BaseStatusEffect.Tech_Master_Perk_2_Buff" );
+		}
+	}
+
+}
