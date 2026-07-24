@@ -265,12 +265,14 @@ class SandevistanEvents extends TimeDilationEventsTransitions
 		SetTimeDilationGlobal( stateContext, scriptInterface, TimeDilationHelper.GetSandevistanKey(), timeDilation, 999.0, ,  );
 		GameInstance.GetRazerChromaEffectsSystem( scriptInterface.GetGame() ).PlayAnimation( 'SlowMotion', true );
 		GameInstance.GetStatPoolsSystem( scriptInterface.GetGame() ).RequestChangingStatPoolValue( scriptInterface.executionOwner.GetEntityID(), gamedataStatPoolType.SandevistanCharge, enterCost, NULL, false );
+		GameObject.PlaySound( GetPlayerPuppet( scriptInterface ), 'sandevistan_sweet_dreams' );
 	}
 
 	protected function OnForcedExit( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
 	{
 		UnsetTimeDilation( stateContext, scriptInterface, TimeDilationHelper.GetSandevistanKey(), 'SandevistanEaseOut' );
 		GameInstance.GetRazerChromaEffectsSystem( scriptInterface.GetGame() ).StopAnimation( 'SlowMotion' );
+		GameObject.StopSound( GetPlayerPuppet( scriptInterface ), 'sandevistan_sweet_dreams' );
 	}
 
 	protected override function OnExit( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
@@ -280,6 +282,7 @@ class SandevistanEvents extends TimeDilationEventsTransitions
 		UnsetTimeDilation( stateContext, scriptInterface, TimeDilationHelper.GetSandevistanKey(), 'SandevistanEaseOut' );
 		StatusEffectHelper.RemoveAllStatusEffectsByType( scriptInterface.executionOwner, gamedataStatusEffectType.Sandevistan );
 		GameInstance.GetRazerChromaEffectsSystem( scriptInterface.GetGame() ).StopAnimation( 'SlowMotion' );
+		GameObject.StopSound( GetPlayerPuppet( scriptInterface ), 'sandevistan_sweet_dreams' );
 	}
 
 	protected export function OnUpdate( timeDelta : Float, stateContext : StateContext, scriptInterface : StateGameScriptInterface )

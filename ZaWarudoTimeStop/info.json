@@ -15,6 +15,13 @@
       "file": "toki_wa_ugokidasu.wav",
       "gain": 1.0,
       "pitch": 0.0
+    },
+    {
+      "name": "sandevistan_sweet_dreams",
+      "type": "mod_sfx_2d",
+      "file": "sweet_dreams.wav",
+      "gain": 1.0,
+      "pitch": 0.0
     }
   ]
 }
