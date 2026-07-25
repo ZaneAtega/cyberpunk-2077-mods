@@ -1,0 +1,20 @@
+{
+    "name": "Can't Stop the A-Train",
+    "version": "1.0.0",
+    "customSounds": [
+        {
+            "name": "lcm_dash",
+            "type": "mod_sfx_2d",
+            "file": "a-train.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
+            "name": "lcm_dash_katana",
+            "type": "mod_sfx_2d",
+            "file": "a-train.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        }
+    ]
+}
