@@ -1,0 +1,13 @@
+{
+    "name": "Throughout Heaven and Earth, I alone am the honored one",
+    "version": "1.0.0",
+    "customSounds": [
+        {
+            "name": "the_honored_one",
+            "type": "mod_sfx_2d",
+            "file": "the_honored_one.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        }
+    ]
+}
