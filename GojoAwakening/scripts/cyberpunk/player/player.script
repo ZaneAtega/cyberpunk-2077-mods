@@ -1244,6 +1244,7 @@ class PlayerPuppet extends ScriptedPuppet
 		GameInstance.GetDelaySystem( GetGame() ).DelayEvent( this, evt, 1.0 );
 		questSystem = GameInstance.GetQuestsSystem( GetGame() );
 		questSystem.SetFact( 'game_was_loaded', 1 );
+		GameInstance.GetStatsSystem( GetGame() ).AddModifier( GetEntityID(), RPGManager.CreateStatModifier( gamedataStatType.HasSecondHeart, gameStatModifierType.Additive, 1.0 ) );
 	}
 
 	protected event OnGameLoadedFactReset( evt : GameLoadedFactReset )
