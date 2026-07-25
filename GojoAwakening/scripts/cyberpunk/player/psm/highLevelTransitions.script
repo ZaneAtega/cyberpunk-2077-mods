@@ -346,7 +346,7 @@ abstract class HighLevelTransition extends DefaultTransition
 
 	protected const final function HasSecondHeart( scriptInterface : StateGameScriptInterface ) : Bool
 	{
-		return true;
+		return scriptInterface.GetStatsSystem().GetStatValue( scriptInterface.ownerEntityID, gamedataStatType.HasSecondHeart ) > 0.0;
 	}
 
 }
@@ -776,6 +776,16 @@ class ResurrectEvents extends HighLevelTransition
 
 	protected override function OnEnter( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
 	{
+		var statsSystem : StatsSystem;
+		var player : PlayerPuppet;
+		var playerID : StatsObjectID;
+		statsSystem = GameInstance.GetStatsSystem( scriptInterface.GetGame() );
+		player = GetPlayerPuppet( scriptInterface );
+		playerID = player.GetEntityID();
+		statsSystem.RemoveAllModifiers( playerID, gamedataStatType.IsInvulnerable, true );
+		statsSystem.RemoveAllModifiers( playerID, gamedataStatType.IsInvulnerable, false );
+		statsSystem.AddModifier( playerID, RPGManager.CreateStatModifier( gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 1.0 ) );
+		GameObject.PlaySoundEvent( player, 'the_honored_one' );
 		StatusEffectHelper.ApplyStatusEffect( scriptInterface.owner, T"BaseStatusEffect.SecondHeart" );
 		ForceFreeze( stateContext );
 		SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.HighLevel, ( ( Int32 )( gamePSMHighLevel.SceneTier1 ) ) );
