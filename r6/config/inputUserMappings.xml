@@ -788,8 +788,8 @@
 		<button id="IK_F1" overridableUI="unlimitedVoid"/>
 	</mapping>
 
-	<mapping name="Arise_Button" type="Button" >
-		<button id="IK_F2" overridableUI="arise"/>
+	<mapping name="Geass_Button" type="Button" >
+		<button id="IK_F2" overridableUI="Geass"/>
 	</mapping>
 	
 	<!-- BUTTON COMBO GROUPS -->

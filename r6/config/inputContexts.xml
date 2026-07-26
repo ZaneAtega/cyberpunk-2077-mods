@@ -965,7 +965,7 @@
 		<include name="AbilitiesWithoutIconic" />
 		<action name="IconicCyberware"			map="IconicCyberware_Button" />
 		<action name="UnlimitedVoid"			map="UnlimitedVoid_Button" />
-		<action name="Arise"			map="Arise_Button" />
+		<action name="Geass"			map="Geass_Button" />
 	</context>
 
 	<context name="VisionActions" >
@@ -1727,12 +1727,10 @@
 
 	<acceptedEvents action="UnlimitedVoid" >
 		<event name="BUTTON_PRESSED" />
-		<event name="BUTTON_RELEASED" />
 	</acceptedEvents>
 
-	<acceptedEvents action="Arise" >
+	<acceptedEvents action="Geass" >
 		<event name="BUTTON_PRESSED" />
-		<event name="BUTTON_RELEASED" />
 	</acceptedEvents>
 
 	<acceptedEvents action="RangedAttack" >

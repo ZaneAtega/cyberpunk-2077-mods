@@ -1,0 +1,20 @@
+{
+  "name": "Geass",
+  "version": "1.0.0",
+  "customSounds": [
+        {
+            "name": "geass",
+            "type": "mod_sfx_2d",
+            "file": "geass.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
+            "name": "quickhack_cyberpsychosis_mech",
+            "type": "mod_sfx_2d",
+            "file": "silent.wav",
+            "gain": 0.0,
+            "pitch": 0.0
+        }
+  ]
+}
