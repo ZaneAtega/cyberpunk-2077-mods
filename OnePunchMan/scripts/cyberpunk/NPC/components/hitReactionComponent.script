@@ -253,6 +253,7 @@ class HitReactionComponent extends AIMandatoryComponents
 	default m_attackIsValidBodyPerk = false;
 	private var m_invalidForExecuteDismember : Bool;
 	default m_invalidForExecuteDismember = false;
+	private var m_shouldOnePunch : Bool;
 
 	protected function UpdateDBParams( data : ScriptTaskData )
 	{
@@ -2041,7 +2042,10 @@ class HitReactionComponent extends AIMandatoryComponents
 		var woundedBaseConditions : Bool;
 		var stopScanningEvent : AIEvent;
 		var healthMissingAfterAttack : Float;
-		if( !( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) ) && !( CanDieCondition() ) )
+		var weaponType : gamedataItemType;
+		weaponType = RPGManager.GetItemType( m_attackData.GetWeapon().GetItemID() );
+		m_shouldOnePunch = ( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) && ( weaponType == gamedataItemType.Wea_Fists || weaponType == gamedataItemType.Cyb_StrongArms ) );
+		if( !( m_shouldOnePunch ) && !( CanDieCondition() ) )
 		{
 			return;
 		}
@@ -2068,7 +2072,7 @@ class HitReactionComponent extends AIMandatoryComponents
 			return;
 		}
 		woundType = GetDismembermentWoundType();
-		if( !( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) ) && ( woundType != gameDismWoundType.CLEAN && !( HitShapeUserDataBase.IsHitReactionZoneHead( GetHitShapeUserData() ) ) ) && AttackData.IsMelee( m_attackData.GetAttackType() ) )
+		if( !( m_shouldOnePunch ) && ( woundType != gameDismWoundType.CLEAN && !( HitShapeUserDataBase.IsHitReactionZoneHead( GetHitShapeUserData() ) ) ) && AttackData.IsMelee( m_attackData.GetAttackType() ) )
 		{
 			return;
 		}
@@ -2237,7 +2241,7 @@ class HitReactionComponent extends AIMandatoryComponents
 		{
 			return false;
 		}
-		if( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) )
+		if( m_shouldOnePunch )
 		{
 			return true;
 		}
@@ -2400,7 +2404,7 @@ class HitReactionComponent extends AIMandatoryComponents
 		var reactionZoneIndex : Int32;
 		var bodyPartDamageThreshold : Float;
 		reactionZoneIndex = ( ( Int32 )( HitShapeUserDataBase.GetHitReactionZone( GetHitShapeUserData() ) ) );
-		if( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) )
+		if( m_shouldOnePunch )
 		{
 			return true;
 		}
@@ -2485,7 +2489,7 @@ class HitReactionComponent extends AIMandatoryComponents
 		var chanceByHealth : Float;
 		var weaponType : gamedataItemType;
 		chanceByHealth = 0.0;
-		if( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) )
+		if( m_shouldOnePunch )
 		{
 			return true;
 		}
@@ -2536,7 +2540,7 @@ class HitReactionComponent extends AIMandatoryComponents
 		var executeChance : Float;
 		var chanceByHealth : Float;
 		var chanceByProximity : Float;
-		if( AttackData.IsStrongMelee( m_attackData.GetAttackType() ) )
+		if( m_shouldOnePunch )
 		{
 			return true;
 		}

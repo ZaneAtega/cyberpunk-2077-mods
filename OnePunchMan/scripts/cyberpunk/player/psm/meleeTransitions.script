@@ -3405,8 +3405,12 @@ class MeleeStrongAttackEvents extends MeleeAttackGenericEvents
 		var finisherTarget : EntityID;
 		var leapTarget : EntityID;
 		var LeapPosition : Vector4;
-		m_strongMeleeModifier = RPGManager.CreateStatModifier( gamedataStatType.MeleeDamagePercentBonus, gameStatModifierType.Additive, 99999.0 );
-		GameInstance.GetStatsSystem( scriptInterface.GetGame() ).AddModifier( scriptInterface.ownerEntityID, m_strongMeleeModifier );
+		weaponType = GetWeaponType( scriptInterface );
+		if ( weaponType == gamedataItemType.Wea_Fists || weaponType == gamedataItemType.Cyb_StrongArms )
+		{
+			m_strongMeleeModifier = RPGManager.CreateStatModifier( gamedataStatType.MeleeDamagePercentBonus, gameStatModifierType.Additive, 99999.0 );
+			GameInstance.GetStatsSystem( scriptInterface.GetGame() ).AddModifier( scriptInterface.ownerEntityID, m_strongMeleeModifier );
+		}
 		weapon = GameObject.GetActiveWeapon( scriptInterface.executionOwner );
 		isBossFinisher = stateContext.GetPermanentBoolParameter( 'bossFinisherAttack' );
 		playerPerkDataBB = GameInstance.GetBlackboardSystem( scriptInterface.executionOwner.GetGame() ).Get( GetAllBlackboardDefs().PlayerPerkData );
@@ -3417,7 +3421,6 @@ class MeleeStrongAttackEvents extends MeleeAttackGenericEvents
 		isFinisher = EntityID.IsDefined( finisherTarget );
 		if( ( HasNewSpyAttackStatFlag( scriptInterface ) && WeaponIsCharged( scriptInterface ) ) && !( isFinisher ) )
 		{
-			weaponType = GetWeaponType( scriptInterface );
 			player = scriptInterface.executionOwner;
 			target = ( ( NPCPuppet )( GameInstance.GetTargetingSystem( player.GetGame() ).GetLookAtObject( player, true ) ) );
 			if( !( target ) )
@@ -3537,7 +3540,10 @@ class MeleeStrongAttackEvents extends MeleeAttackGenericEvents
 		}
 		m_slowMoSet = false;
 		m_crouchedAfterLeapAttack = false;
-		GameInstance.GetStatsSystem( scriptInterface.GetGame() ).RemoveModifier( scriptInterface.ownerEntityID, m_strongMeleeModifier );
+		if( m_strongMeleeModifier != NULL )
+		{
+			GameInstance.GetStatsSystem( scriptInterface.GetGame() ).RemoveModifier( scriptInterface.ownerEntityID, m_strongMeleeModifier );
+		}
 		super.OnExit( stateContext, scriptInterface );
 	}
 
