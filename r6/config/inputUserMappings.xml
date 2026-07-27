@@ -789,7 +789,11 @@
 	</mapping>
 
 	<mapping name="Geass_Button" type="Button" >
-		<button id="IK_F2" overridableUI="Geass"/>
+		<button id="IK_F2" overridableUI="geass"/>
+	</mapping>
+
+	<mapping name="RoyMustang_Button" type="Button" >
+		<button id="IK_F3" overridableUI="royMustang"/>
 	</mapping>
 	
 	<!-- BUTTON COMBO GROUPS -->

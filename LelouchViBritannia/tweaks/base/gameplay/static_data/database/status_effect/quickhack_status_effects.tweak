@@ -6589,8 +6589,8 @@ TerminateAfterFriendly : Effector
 {
 	prereqRecord = 
 	{
-		duration = 4.f;
-		randRange = 1.f;
+		duration = 9999.f;
+		randRange = 0.f;
 	} : Prereqs.DurationPrereq;
 	CName effectorClassName = "ApplyStatusEffectEffector";
 	string statusEffect = "BaseStatusEffect.ForceKill";

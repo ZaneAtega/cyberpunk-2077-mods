@@ -2233,8 +2233,14 @@
                     "is_input": true
                 },
                 {
-                    "name": "Geass",
+                    "name": "geass",
                     "display_name": "Geass",
+                    "order": 42,
+                    "is_input": true
+                },
+                {
+                    "name": "royMustang",
+                    "display_name": "Roy Mustang",
                     "order": 42,
                     "is_input": true
                 }

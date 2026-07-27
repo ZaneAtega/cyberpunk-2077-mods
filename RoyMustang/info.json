@@ -1,0 +1,20 @@
+{
+  "name": "Roy Mustang",
+  "version": "1.0.0",
+  "customSounds": [
+        {
+            "name": "snap",
+            "type": "mod_sfx_2d",
+            "file": "snap.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
+            "name": "quickhack_synapse_burnout",
+            "type": "mod_sfx_2d",
+            "file": "silent.wav",
+            "gain": 0.0,
+            "pitch": 0.0
+        }
+  ]
+}
