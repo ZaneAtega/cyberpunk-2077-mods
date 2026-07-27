@@ -6534,7 +6534,7 @@ SetFriendly : BaseQuickHackStatusEffect
 				{
 					prereqRecord = "Prereqs.AlwaysTruePrereq";
 					CName effectorClassName = "SetFriendlyEffector";
-					float duration = 30.f;
+					float duration = 9999.f;
 				} : Effector, 
 				{
 					prereqRecord = "Prereqs.AlwaysTruePrereq";
@@ -6549,15 +6549,15 @@ SetFriendly : BaseQuickHackStatusEffect
 						nestedPrereqs = 
 						[
 							{
-								duration = 10.0f;
+								duration = 9999.0f;
 							} : Prereqs.DurationPrereq, 
 							{
 								stateName = "Combat";
 								isInState = false;
 							} : Prereqs.HighLevelNPCStatePrereq, 
 							{
-								duration = 3.f;
-								randRange = 1.f;
+								duration = 9999.f;
+								randRange = 0.f;
 							} : Prereqs.DurationPrereq
 						];
 					} : MultiPrereq;

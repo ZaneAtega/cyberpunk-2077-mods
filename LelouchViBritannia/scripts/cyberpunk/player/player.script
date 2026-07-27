@@ -1488,7 +1488,7 @@ class PlayerPuppet extends ScriptedPuppet
 		GameObject.PlaySound( this, 'geass' );
 
 		searchQuery.testedSet = TargetingSet.Complete;
-		searchQuery.searchFilter = TSF_Not( TSFMV.Att_Friendly );
+		searchQuery.searchFilter = TSF_NPC();
 		searchQuery.maxDistance = 20.0;
 		searchQuery.filterObjectByDistance = true;
 		searchQuery.includeSecondaryTargets = true;
