@@ -10,6 +10,13 @@
             "pitch": 0.0
         },
         {
+            "name": "fire",
+            "type": "mod_sfx_2d",
+            "file": "fire.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
             "name": "quickhack_synapse_burnout",
             "type": "mod_sfx_2d",
             "file": "silent.wav",

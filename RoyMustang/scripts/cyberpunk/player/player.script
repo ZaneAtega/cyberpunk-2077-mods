@@ -1494,12 +1494,17 @@ class PlayerPuppet extends ScriptedPuppet
 		GameInstance.GetPlayerSystem( GetGame() ).GetLocalPlayerMainGameObject().QueueEvent( adHocAnimEvent );
 
 		searchQuery.testedSet = TargetingSet.Complete;
-		searchQuery.searchFilter = TSF_NPC();
+		searchQuery.searchFilter = TSF_Any( TSFMV.St_Alive );
 		searchQuery.maxDistance = 20.0;
 		searchQuery.filterObjectByDistance = true;
 		searchQuery.includeSecondaryTargets = true;
 		searchQuery.ignoreInstigator = true;
 		GameInstance.GetTargetingSystem( GetGame() ).GetTargetParts( this, searchQuery, targetParts );
+
+		if ( targetParts.Size() > 0 )
+		{
+			GameObject.PlaySound( this, 'fire' );
+		}
 
 		for( i = 0; i < targetParts.Size(); i += 1 )
 		{
