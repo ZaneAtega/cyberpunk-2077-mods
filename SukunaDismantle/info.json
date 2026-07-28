@@ -1,0 +1,13 @@
+{
+    "name": "Dismantle",
+    "version": "1.0.0",
+    "customSounds": [
+        {
+            "name": "w_gun_perk_gratuitous_violence",
+            "type": "mod_sfx_2d",
+            "file": "dismantle.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        }
+    ]
+}
