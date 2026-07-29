@@ -9,7 +9,7 @@ controller = Controller()
 def on_click(x, y, button, pressed):
     global holding
 
-    if (window := getActiveWindow()) and window.title != "Cyberpunk 2077 (C) 2020 by CD Projekt RED":
+    if not (window := getActiveWindow()) or window.title != "Cyberpunk 2077 (C) 2020 by CD Projekt RED":
         holding = False
         return
 
