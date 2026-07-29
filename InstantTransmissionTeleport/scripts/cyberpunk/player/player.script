@@ -1177,7 +1177,7 @@ class PlayerPuppet extends ScriptedPuppet
 			RegisterInputListener( this, 'ToggleWalk' );
 			RegisterInputListener( this, 'SceneFastForward' );
 			RegisterInputListener( this, 'PocketRadio' );
-			RegisterInputListener( this, 'RoyMustang' );
+			RegisterInputListener( this, 'InstantTransmission' );
 			m_Debug_DamageInputRec = new DEBUG_DamageInputReceiver;
 			m_Debug_DamageInputRec.m_player = this;
 			RegisterInputListener( m_Debug_DamageInputRec, 'Debug_KillAll' );
@@ -1380,9 +1380,9 @@ class PlayerPuppet extends ScriptedPuppet
 		{
 			m_pocketRadio.HandleInputAction( action );
 		}
-		else if( ListenerAction.GetName( action ) == 'RoyMustang' )
+		else if( ListenerAction.GetName( action ) == 'InstantTransmission' )
 		{
-			RoyMustang();
+			InstantTransmission();
 		}
 	}
 
@@ -1478,40 +1478,12 @@ class PlayerPuppet extends ScriptedPuppet
 		GameInstance.GetUISystem( GetGame() ).QueueEvent( dpadAction );
 	}
 
-	private final function RoyMustang()
+	private final function InstantTransmission()
 	{
-		var adHocAnimEvent : AdHocAnimationEvent;
-		var searchQuery : TargetSearchQuery;
-		var targetParts : array< TS_TargetPartInfo >;
-		var i : Int32;
-		var target : GameObject;
-
-		GameObject.PlaySound( this, 'snap' );
-
-		adHocAnimEvent = new AdHocAnimationEvent;
-		adHocAnimEvent.unequipWeapon = true;
-		adHocAnimEvent.animationDuration = 0.0001;
-		GameInstance.GetPlayerSystem( GetGame() ).GetLocalPlayerMainGameObject().QueueEvent( adHocAnimEvent );
-
-		searchQuery.testedSet = TargetingSet.Complete;
-		searchQuery.searchFilter = TSF_Any( TSFMV.St_Alive );
-		searchQuery.maxDistance = 20.0;
-		searchQuery.filterObjectByDistance = true;
-		searchQuery.includeSecondaryTargets = true;
-		searchQuery.ignoreInstigator = true;
-		GameInstance.GetTargetingSystem( GetGame() ).GetTargetParts( this, searchQuery, targetParts );
-
-		if( targetParts.Size() > 0 )
-		{
-			GameObject.PlaySound( this, 'fire' );
-		}
-
-		for( i = 0; i < targetParts.Size(); i += 1 )
-		{
-			target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity() ) );
-			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.Burning" );
-			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.BrainMeltQuestForceKill" );
-		}
+		var position : Vector4;
+		position = GameInstance.GetTargetingSystem( GetGame() ).GetLookAtPosition( this, true, true );
+		GameObject.PlaySound( this, 'instant_transmission' );
+		GameInstance.GetTeleportationFacility( GetGame() ).Teleport( this, position, Vector4.ToRotation( GetWorldForward() ) );
 	}
 
 	private function IsPhoneCallActive() : Bool

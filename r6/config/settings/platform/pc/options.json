@@ -2241,7 +2241,13 @@
                 {
                     "name": "royMustang",
                     "display_name": "Roy Mustang",
-                    "order": 42,
+                    "order": 43,
+                    "is_input": true
+                },
+                {
+                    "name": "instantTransmission",
+                    "display_name": "Instant Transmission",
+                    "order": 44,
                     "is_input": true
                 }
             ]

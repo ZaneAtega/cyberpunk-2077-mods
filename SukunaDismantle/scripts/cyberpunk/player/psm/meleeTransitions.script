@@ -2396,7 +2396,7 @@ abstract class MeleeAttackGenericEvents extends MeleeEventsTransition
 		var finisherTargetID : EntityID;
 		var weaponType : gamedataItemType;
 		weaponType = GetWeaponType( scriptInterface );
-		if ( weaponType == gamedataItemType.Wea_LongBlade || weaponType == gamedataItemType.Wea_Katana || weaponType == gamedataItemType.Wea_Knife || weaponType == gamedataItemType.Wea_Machete || weaponType == gamedataItemType.Wea_Sword )
+		if( weaponType == gamedataItemType.Wea_LongBlade || weaponType == gamedataItemType.Wea_Katana || weaponType == gamedataItemType.Wea_Knife || weaponType == gamedataItemType.Wea_Machete || weaponType == gamedataItemType.Wea_Sword )
 		{
 			m_bladesModifier = RPGManager.CreateStatModifier( gamedataStatType.MeleeDamagePercentBonus, gameStatModifierType.Additive, 99999.0 );
 			GameInstance.GetStatsSystem( scriptInterface.GetGame() ).AddModifier( scriptInterface.ownerEntityID, m_bladesModifier );
@@ -2786,7 +2786,7 @@ abstract class MeleeAttackGenericEvents extends MeleeEventsTransition
 		stateContext.SetPermanentBoolParameter( 'InterruptMelee', false, true );
 		stateContext.SetPermanentBoolParameter( 'IsInMeleeLeapState', false, true );
 		m_enteredFromMeleeLeap = false;
-		if ( m_bladesModifier != NULL )
+		if( m_bladesModifier )
 		{
 			GameInstance.GetStatsSystem( scriptInterface.GetGame() ).RemoveModifier( scriptInterface.ownerEntityID, m_bladesModifier );
 		}

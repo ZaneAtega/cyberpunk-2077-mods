@@ -1,0 +1,13 @@
+{
+  "name": "Instant Transmission",
+  "version": "1.0.0",
+  "customSounds": [
+        {
+            "name": "instant_transmission",
+            "type": "mod_sfx_2d",
+            "file": "instant_transmission.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        }
+  ]
+}

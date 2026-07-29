@@ -3406,7 +3406,7 @@ class MeleeStrongAttackEvents extends MeleeAttackGenericEvents
 		var leapTarget : EntityID;
 		var LeapPosition : Vector4;
 		weaponType = GetWeaponType( scriptInterface );
-		if ( weaponType == gamedataItemType.Wea_Fists || weaponType == gamedataItemType.Cyb_StrongArms )
+		if( weaponType == gamedataItemType.Wea_Fists || weaponType == gamedataItemType.Cyb_StrongArms )
 		{
 			m_strongMeleeModifier = RPGManager.CreateStatModifier( gamedataStatType.MeleeDamagePercentBonus, gameStatModifierType.Additive, 99999.0 );
 			GameInstance.GetStatsSystem( scriptInterface.GetGame() ).AddModifier( scriptInterface.ownerEntityID, m_strongMeleeModifier );
@@ -3540,7 +3540,7 @@ class MeleeStrongAttackEvents extends MeleeAttackGenericEvents
 		}
 		m_slowMoSet = false;
 		m_crouchedAfterLeapAttack = false;
-		if( m_strongMeleeModifier != NULL )
+		if( m_strongMeleeModifier )
 		{
 			GameInstance.GetStatsSystem( scriptInterface.GetGame() ).RemoveModifier( scriptInterface.ownerEntityID, m_strongMeleeModifier );
 		}

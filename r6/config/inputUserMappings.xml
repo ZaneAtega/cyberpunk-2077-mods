@@ -795,6 +795,10 @@
 	<mapping name="RoyMustang_Button" type="Button" >
 		<button id="IK_F3" overridableUI="royMustang"/>
 	</mapping>
+
+	<mapping name="InstantTransmission_Button" type="Button" >
+		<button id="IK_F4" overridableUI="instantTransmission"/>
+	</mapping>
 	
 	<!-- BUTTON COMBO GROUPS -->
 	<!-- has time timeWindow during which the combo can be activated ( default param. =  0.1f )

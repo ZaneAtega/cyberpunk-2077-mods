@@ -967,6 +967,7 @@
 		<action name="UnlimitedVoid"			map="UnlimitedVoid_Button" />
 		<action name="Geass"			map="Geass_Button" />
 		<action name="RoyMustang"			map="RoyMustang_Button" />
+		<action name="InstantTransmission"			map="InstantTransmission_Button" />
 	</context>
 
 	<context name="VisionActions" >
@@ -1735,6 +1736,10 @@
 	</acceptedEvents>
 
 	<acceptedEvents action="RoyMustang" >
+		<event name="BUTTON_PRESSED" />
+	</acceptedEvents>
+
+	<acceptedEvents action="InstantTransmission" >
 		<event name="BUTTON_PRESSED" />
 	</acceptedEvents>
 
