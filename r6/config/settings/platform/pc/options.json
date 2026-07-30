@@ -2249,6 +2249,12 @@
                     "display_name": "Instant Transmission",
                     "order": 44,
                     "is_input": true
+                },
+                {
+                    "name": "mahoraga",
+                    "display_name": "With This Treasure, I Summon",
+                    "order": 45,
+                    "is_input": true
                 }
             ]
         },

@@ -799,6 +799,10 @@
 	<mapping name="InstantTransmission_Button" type="Button" >
 		<button id="IK_F4" overridableUI="instantTransmission"/>
 	</mapping>
+
+	<mapping name="Mahoraga_Button" type="Button" >
+		<button id="IK_F6" overridableUI="mahoraga"/>
+	</mapping>
 	
 	<!-- BUTTON COMBO GROUPS -->
 	<!-- has time timeWindow during which the combo can be activated ( default param. =  0.1f )

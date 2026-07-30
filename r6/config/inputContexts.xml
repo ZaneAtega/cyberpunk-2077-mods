@@ -968,6 +968,7 @@
 		<action name="Geass"			map="Geass_Button" />
 		<action name="RoyMustang"			map="RoyMustang_Button" />
 		<action name="InstantTransmission"			map="InstantTransmission_Button" />
+		<action name="Mahoraga"			map="Mahoraga_Button" />
 	</context>
 
 	<context name="VisionActions" >
@@ -1740,6 +1741,10 @@
 	</acceptedEvents>
 
 	<acceptedEvents action="InstantTransmission" >
+		<event name="BUTTON_PRESSED" />
+	</acceptedEvents>
+
+	<acceptedEvents action="Mahoraga" >
 		<event name="BUTTON_PRESSED" />
 	</acceptedEvents>
 
