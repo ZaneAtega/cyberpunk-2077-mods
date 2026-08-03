@@ -573,6 +573,8 @@ class PlayerPuppet extends ScriptedPuppet
 	private var m_pocketRadio : PocketRadio;
 	private var m_noMovementModifierData : array< gameStatModifierData >;
 	private var m_registeredFactListeners : array< FactCallbackData >;
+	private var m_isMahoragaVFXActive : Bool;
+	private var m_mahoragaChantDelayID : DelayID;
 	private var m_isSmasherMusicPlaying : Bool;
 
 	public const override function IsPlayer() : Bool
@@ -1482,6 +1484,7 @@ class PlayerPuppet extends ScriptedPuppet
 	private final function Mahoraga()
 	{
 		var target : GameObject;
+		var delaySystem : DelaySystem;
 		var adHocAnimEvent : AdHocAnimationEvent;
 		var transform : WorldTransform;
 
@@ -1495,11 +1498,23 @@ class PlayerPuppet extends ScriptedPuppet
 		{
 			GameObject.PlaySound( this, 'with_this_treasure_i_summon' );
 
+			m_isMahoragaVFXActive = m_inCrouch;
+
+			if( !( m_isMahoragaVFXActive ) )
+			{
+				GameObjectEffectHelper.StartEffectEvent( this, 'stealth_mode' );
+				m_isMahoragaVFXActive = true;
+			}
+
+			delaySystem = GameInstance.GetDelaySystem( GetGame() );
+			delaySystem.CancelDelay( m_mahoragaChantDelayID );
+			m_mahoragaChantDelayID = delaySystem.DelayEvent( this, new MahoragaChantFinishedEvent, 2.73, false );
+
 			if( !( m_isSmasherMusicPlaying ) )
 			{
 				GameObject.PlaySound( this, 'adam_smasher' );
 				m_isSmasherMusicPlaying = true;
-				GameInstance.GetDelaySystem( GetGame() ).DelayEvent( this, new SmasherMusicFinishedEvent, 98.835, false );
+				delaySystem.DelayEvent( this, new SmasherMusicFinishedEvent, 98.835, false );
 			}
 
 			adHocAnimEvent = new AdHocAnimationEvent;
@@ -1511,6 +1526,17 @@ class PlayerPuppet extends ScriptedPuppet
 			WorldTransform.SetOrientationFromDir( transform, GetWorldForward() * -1.0 );
 			GameInstance.GetPreventionSpawnSystem( GetGame() ).RequestUnitSpawn( T"Character.main_boss_adam_smasher", transform );
 		}
+	}
+
+	protected event OnMahoragaChantFinishedEvent( evt: MahoragaChantFinishedEvent )
+	{
+		m_isMahoragaVFXActive = false;
+
+		if( !( m_inCrouch ) )
+		{
+			GameObjectEffectHelper.BreakEffectLoopEvent( this, 'stealth_mode' );
+		}
+		
 	}
 
 	protected event OnSmasherMusicFinishedEvent( evt: SmasherMusicFinishedEvent )
@@ -7848,6 +7874,10 @@ struct FactCallbackData
 {
 	var m_factName : CName;
 	var m_callbackID : Uint32;
+}
+
+class MahoragaChantFinishedEvent extends Event
+{
 }
 
 class SmasherMusicFinishedEvent extends Event

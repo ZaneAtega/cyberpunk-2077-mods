@@ -1482,6 +1482,7 @@ class PlayerPuppet extends ScriptedPuppet
 	{
 		var position : Vector4;
 		position = GameInstance.GetTargetingSystem( GetGame() ).GetLookAtPosition( this, true, true );
+		GameObjectEffectHelper.StartEffectEvent( this, 'iconic_cyberware_ready' );
 		GameObject.PlaySound( this, 'instant_transmission' );
 		GameInstance.GetTeleportationFacility( GetGame() ).Teleport( this, position, Vector4.ToRotation( GetWorldForward() ) );
 	}

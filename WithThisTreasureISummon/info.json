@@ -1,7 +1,7 @@
 {
-  "name": "With This Treasure, I Summon",
-  "version": "1.0.0",
-  "customSounds": [
+    "name": "With This Treasure, I Summon",
+    "version": "1.0.0",
+    "customSounds": [
         {
             "name": "with_this_treasure_i_summon",
             "type": "mod_sfx_2d",
@@ -16,5 +16,5 @@
             "gain": 1.0,
             "pitch": 0.0
         }
-  ]
+    ]
 }

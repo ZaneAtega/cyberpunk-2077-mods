@@ -95,32 +95,6 @@ abstract class LocomotionTransition extends DefaultTransition
 		stateContext.SetPermanentFloatParameter( 'InAirDuration', 0.0, true );
 	}
 
-	protected function PlayHardLandingEffects( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		StartEffect( scriptInterface, 'landing_hard' );
-		PrepareGameEffectAoEAttack( stateContext, scriptInterface, TweakDBInterface.GetAttackRecord( T"Attacks.HardLanding" ) );
-		SpawnLandingFxGameEffect( T"Attacks.HardLanding", scriptInterface );
-		GameObject.PlayVoiceOver( scriptInterface.owner, 'hardLanding', 'Scripts:HardLandEvents' );
-		PlayRumble( scriptInterface, "medium_pulse" );
-	}
-
-	protected function PlayVeryHardLandingEffects( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		StartEffect( scriptInterface, 'landing_very_hard' );
-		PrepareGameEffectAoEAttack( stateContext, scriptInterface, TweakDBInterface.GetAttackRecord( T"Attacks.VeryHardLanding" ) );
-		SpawnLandingFxGameEffect( T"Attacks.VeryHardLanding", scriptInterface );
-		GameObject.PlayVoiceOver( scriptInterface.owner, 'veryhardLanding', 'Scripts:VeryHardLandEvents' );
-		PlayRumble( scriptInterface, "heavy_fast" );
-	}
-
-	protected function PlayDeathLandingEffects( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		StartEffect( scriptInterface, 'landing_death' );
-		PrepareGameEffectAoEAttack( stateContext, scriptInterface, TweakDBInterface.GetAttackRecord( T"Attacks.DeathLanding" ) );
-		SpawnLandingFxGameEffect( T"Attacks.DeathLanding", scriptInterface );
-		GameObject.PlayVoiceOver( scriptInterface.owner, 'veryhardLanding', 'Scripts:DeathLandEvents' );
-	}
-
 	protected function SendSuperHeroLandAnimFeature( scriptInterface : StateGameScriptInterface, state : Int32 )
 	{
 		var animFeature : AnimFeature_SuperheroLand;
@@ -3089,8 +3063,13 @@ class DodgeEvents extends LocomotionGroundEvents
 
 	protected function Dash( stateContext : StateContext, scriptInterface : StateGameScriptInterface, isExhausted : Bool, treatDashAsAirDash : Bool )
 	{
+		var impulseValue : Float;
 		var impulse : Vector4;
 		var dodgeHeading : Float;
+		var dashMovementDecelerationModifier : Float;
+		var airDashMovementDecelerationModifier : Float;
+		dashMovementDecelerationModifier = GetStaticFloatParameterDefault( "dashMovementDecelerationModifier", -0.71399999 );
+		airDashMovementDecelerationModifier = GetStaticFloatParameterDefault( "airDashMovementDecelerationModifier", -0.71399999 );
 		if( !( IsTouchingGround( scriptInterface ) ) )
 		{
 			stateContext.SetPermanentBoolParameter( 'disableAirDash', true, true );
@@ -3102,9 +3081,14 @@ class DodgeEvents extends LocomotionGroundEvents
 		}
 		if( treatDashAsAirDash )
 		{
-			m_airDashDecelerationModifier = EnableMovementDecelerationStatModifier( stateContext, scriptInterface, m_airDashDecelerationModifier, 999999.0 );
-			if( !( isExhausted ) )
+			m_airDashDecelerationModifier = EnableMovementDecelerationStatModifier( stateContext, scriptInterface, m_airDashDecelerationModifier, airDashMovementDecelerationModifier );
+			if( isExhausted )
 			{
+				impulseValue = GetStaticFloatParameterDefault( "airDashImpulseNoStamina", 6.5 );
+			}
+			else
+			{
+				impulseValue = GetStaticFloatParameterDefault( "airDashImpulse", 10.0 );
 				StatusEffectHelper.ApplyStatusEffect( scriptInterface.executionOwner, T"BaseStatusEffect.DodgeAirBuff" );
 			}
 			if( PlayerDevelopmentSystem.GetInstance( scriptInterface.executionOwner ).IsNewPerkBought( scriptInterface.executionOwner, gamedataNewPerkType.Reflexes_Master_Perk_3 ) == 1 )
@@ -3115,10 +3099,18 @@ class DodgeEvents extends LocomotionGroundEvents
 		}
 		else
 		{
-			m_dashDecelerationModifier = EnableMovementDecelerationStatModifier( stateContext, scriptInterface, m_dashDecelerationModifier, 999999.0 );
+			m_dashDecelerationModifier = EnableMovementDecelerationStatModifier( stateContext, scriptInterface, m_dashDecelerationModifier, dashMovementDecelerationModifier );
+			if( isExhausted )
+			{
+				impulseValue = GetStaticFloatParameterDefault( "dashImpulseNoStamina", 7.80000019 );
+			}
+			else
+			{
+				impulseValue = GetStaticFloatParameterDefault( "dashImpulse", 10.0 );
+			}
 		}
 		dodgeHeading = stateContext.GetConditionFloat( 'DodgeDirection' );
-		impulse = Vector4.FromHeading( AngleNormalize180( Transform.GetYaw( scriptInterface.GetCameraWorldTransform() ) + dodgeHeading ) ) * 999999.0;
+		impulse = Vector4.FromHeading( AngleNormalize180( Transform.GetYaw( scriptInterface.GetCameraWorldTransform() ) + dodgeHeading ) ) * impulseValue;
 		AddImpulse( stateContext, impulse );
 		if( !( isExhausted ) )
 		{
@@ -3128,15 +3120,23 @@ class DodgeEvents extends LocomotionGroundEvents
 
 	protected function Dodge( stateContext : StateContext, scriptInterface : StateGameScriptInterface, isExhausted : Bool )
 	{
+		var impulseValue : Float;
 		var impulse : Vector4;
 		var dodgeHeading : Float;
-		m_dashDecelerationModifier = EnableMovementDecelerationStatModifier( stateContext, scriptInterface, m_dashDecelerationModifier, 999999.0 );
-		if( !( isExhausted ) )
+		var dashMovementDecelerationModifier : Float;
+		dashMovementDecelerationModifier = GetStaticFloatParameterDefault( "dashMovementDecelerationModifier", -0.71399999 );
+		m_dashDecelerationModifier = EnableMovementDecelerationStatModifier( stateContext, scriptInterface, m_dashDecelerationModifier, dashMovementDecelerationModifier );
+		if( isExhausted )
 		{
+			impulseValue = GetStaticFloatParameterDefault( "impulseNoStamina", 5.5 );
+		}
+		else
+		{
+			impulseValue = GetStaticFloatParameterDefault( "impulse", 7.80000019 );
 			StatusEffectHelper.ApplyStatusEffect( scriptInterface.owner, T"BaseStatusEffect.PlayerJustDodged", scriptInterface.owner.GetEntityID() );
 		}
 		dodgeHeading = stateContext.GetConditionFloat( 'DodgeDirection' );
-		impulse = Vector4.FromHeading( AngleNormalize180( Transform.GetYaw( scriptInterface.GetCameraWorldTransform() ) + dodgeHeading ) ) * 999999.0;
+		impulse = Vector4.FromHeading( AngleNormalize180( Transform.GetYaw( scriptInterface.GetCameraWorldTransform() ) + dodgeHeading ) ) * impulseValue;
 		AddImpulse( stateContext, impulse );
 		if( !( isExhausted ) )
 		{
@@ -4443,31 +4443,11 @@ abstract class LocomotionAirDecisions extends LocomotionTransition
 
 	protected export const function ToHardLand( const stateContext : StateContext, const scriptInterface : StateGameScriptInterface ) : Bool
 	{
-		var landingType : Int32;
-		if( !( IsTouchingGround( scriptInterface ) ) || ( GetVerticalSpeed( scriptInterface ) > 0.0 ) )
-		{
-			return false;
-		}
-		landingType = GetLandingType( stateContext );
-		if( landingType == ( ( Int32 )( LandingType.Hard ) ) )
-		{
-			return true;
-		}
 		return false;
 	}
 
 	protected export const function ToVeryHardLand( const stateContext : StateContext, const scriptInterface : StateGameScriptInterface ) : Bool
 	{
-		var landingType : Int32;
-		if( !( IsTouchingGround( scriptInterface ) ) )
-		{
-			return false;
-		}
-		landingType = GetLandingType( stateContext );
-		if( landingType == ( ( Int32 )( LandingType.VeryHard ) ) )
-		{
-			return true;
-		}
 		return false;
 	}
 
@@ -4482,16 +4462,6 @@ abstract class LocomotionAirDecisions extends LocomotionTransition
 
 	protected export const virtual function ToDeathLand( const stateContext : StateContext, const scriptInterface : StateGameScriptInterface ) : Bool
 	{
-		var landingType : Int32;
-		if( !( IsTouchingGround( scriptInterface ) ) )
-		{
-			return false;
-		}
-		landingType = GetLandingType( stateContext );
-		if( landingType == ( ( Int32 )( LandingType.Death ) ) )
-		{
-			return true;
-		}
 		return false;
 	}
 
@@ -4510,21 +4480,12 @@ abstract class LocomotionAirEvents extends LocomotionEventsTransition
 	{
 		var regularLandingFallingSpeed : Float;
 		var safeLandingFallingSpeed : Float;
-		var hardLandingFallingSpeed : Float;
-		var veryHardLandingFallingSpeed : Float;
-		var deathLandingFallingSpeed : Float;
 		var animFeature : AnimFeature_PlayerLocomotionStateMachine;
 		super.OnEnter( stateContext, scriptInterface );
 		regularLandingFallingSpeed = GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "regularLandingHeight", 0.1 ) );
 		safeLandingFallingSpeed = GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "safeLandingHeight", 0.1 ) );
-		hardLandingFallingSpeed = GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "hardLandingHeight", 1.0 ) );
-		veryHardLandingFallingSpeed = GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "veryHardLandingHeight", 1.0 ) );
-		deathLandingFallingSpeed = GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "deathLanding", 1.0 ) );
 		stateContext.SetPermanentFloatParameter( 'RegularLandingFallingSpeed', regularLandingFallingSpeed, true );
 		stateContext.SetPermanentFloatParameter( 'SafeLandingFallingSpeed', safeLandingFallingSpeed, true );
-		stateContext.SetPermanentFloatParameter( 'HardLandingFallingSpeed', hardLandingFallingSpeed, true );
-		stateContext.SetPermanentFloatParameter( 'VeryHardLandingFallingSpeed', veryHardLandingFallingSpeed, true );
-		stateContext.SetPermanentFloatParameter( 'DeathLandingFallingSpeed', deathLandingFallingSpeed, true );
 		animFeature = new AnimFeature_PlayerLocomotionStateMachine;
 		animFeature.inAirState = true;
 		scriptInterface.SetAnimationParameterFeature( 'LocomotionStateMachine', animFeature );
@@ -4541,9 +4502,6 @@ abstract class LocomotionAirEvents extends LocomotionEventsTransition
 		var playerVelocity : Vector4;
 		var regularLandingFallingSpeed : Float;
 		var safeLandingFallingSpeed : Float;
-		var hardLandingFallingSpeed : Float;
-		var veryHardLandingFallingSpeed : Float;
-		var deathLandingFallingSpeed : Float;
 		var isInSuperheroFall : Bool;
 		var maxAllowedDistanceToGround : Float;
 		var landingType : LandingType;
@@ -4566,15 +4524,12 @@ abstract class LocomotionAirEvents extends LocomotionEventsTransition
 			stateContext.SetConditionBoolParameter( 'CrouchToggled', false, true );
 			return;
 		}
-		if( StatusEffectSystem.ObjectHasStatusEffect( scriptInterface.executionOwner, T"BaseStatusEffect.BerserkPlayerBuff" ) && ( verticalSpeed < GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "minFallHeightToEnterSuperheroFall", 0.0 ) ) ) )
+		if( verticalSpeed < GetFallingSpeedBasedOnHeight( scriptInterface, GetStaticFloatParameterDefault( "minFallHeightToEnterSuperheroFall", 0.0 ) ) )
 		{
 			stateContext.SetTemporaryBoolParameter( 'requestSuperheroLandActivation', true, true );
 		}
 		regularLandingFallingSpeed = stateContext.GetFloatParameter( 'RegularLandingFallingSpeed', true );
 		safeLandingFallingSpeed = stateContext.GetFloatParameter( 'SafeLandingFallingSpeed', true );
-		hardLandingFallingSpeed = stateContext.GetFloatParameter( 'HardLandingFallingSpeed', true );
-		veryHardLandingFallingSpeed = stateContext.GetFloatParameter( 'VeryHardLandingFallingSpeed', true );
-		deathLandingFallingSpeed = stateContext.GetFloatParameter( 'DeathLandingFallingSpeed', true );
 		isLeaping = scriptInterface.localBlackboard.GetBool( GetAllBlackboardDefs().PlayerStateMachine.MeleeLeap ) || StatusEffectSystem.ObjectHasStatusEffect( scriptInterface.executionOwner, T"BaseStatusEffect.PlayerMadDashLocomotionBuffer" );
 		isInSuperheroFall = stateContext.IsStateActive( 'Locomotion', 'superheroFall' );
 		maxAllowedDistanceToGround = GetStaticFloatParameterDefault( "maxDistToGroundFromSuperheroFall", 20.0 );
@@ -4595,25 +4550,6 @@ abstract class LocomotionAirEvents extends LocomotionEventsTransition
 		else if( isLeaping )
 		{
 			return;
-		}
-		else if( verticalSpeed <= deathLandingFallingSpeed )
-		{
-			landingType = LandingType.Death;
-			SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Fall, ( ( Int32 )( gamePSMFallStates.DeathFall ) ) );
-		}
-		else if( verticalSpeed <= veryHardLandingFallingSpeed )
-		{
-			landingType = LandingType.VeryHard;
-			SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Fall, ( ( Int32 )( gamePSMFallStates.VeryFastFall ) ) );
-		}
-		else if( verticalSpeed <= hardLandingFallingSpeed )
-		{
-			landingType = LandingType.Hard;
-			if( GetLandingType( stateContext ) != ( ( Int32 )( LandingType.Hard ) ) )
-			{
-				StartEffect( scriptInterface, 'falling' );
-			}
-			SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Fall, ( ( Int32 )( gamePSMFallStates.FastFall ) ) );
 		}
 		else if( verticalSpeed <= safeLandingFallingSpeed )
 		{
@@ -4676,25 +4612,7 @@ abstract class LocomotionAirEvents extends LocomotionEventsTransition
 		OnExit( stateContext, scriptInterface );
 	}
 
-	protected function OnExitToHardLand( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		m_resetFallingParametersOnExit = false;
-		OnExit( stateContext, scriptInterface );
-	}
-
-	protected function OnExitToVeryHardLand( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		m_resetFallingParametersOnExit = false;
-		OnExit( stateContext, scriptInterface );
-	}
-
 	protected function OnExitToSuperheroLand( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		m_resetFallingParametersOnExit = false;
-		OnExit( stateContext, scriptInterface );
-	}
-
-	protected function OnExitToDeathLand( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
 	{
 		m_resetFallingParametersOnExit = false;
 		OnExit( stateContext, scriptInterface );
@@ -4702,18 +4620,6 @@ abstract class LocomotionAirEvents extends LocomotionEventsTransition
 
 	protected function OnExitToUnsecureFootingFall( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
 	{
-		switch( ( ( LandingType )( GetLandingType( stateContext ) ) ) )
-		{
-			case LandingType.Hard:
-				PlayHardLandingEffects( stateContext, scriptInterface );
-			break;
-			case LandingType.VeryHard:
-				PlayVeryHardLandingEffects( stateContext, scriptInterface );
-			break;
-			case LandingType.Death:
-				PlayDeathLandingEffects( stateContext, scriptInterface );
-			break;
-		}
 		OnExit( stateContext, scriptInterface );
 	}
 
@@ -5025,32 +4931,17 @@ class AirHoverDecisions extends LocomotionAirDecisions
 class AirHoverEvents extends LocomotionAirEvents
 {
 
-	protected function SetDeathFallHeight( stateContext : StateContext, scriptInterface : StateGameScriptInterface, verticalSpeed : Float )
-	{
-		var currentPosition : Vector4;
-		var deathLandingHeight : Float;
-		currentPosition = GetPlayerPosition( scriptInterface );
-		if( verticalSpeed < 0.0 )
-		{
-			currentPosition.Z += GetInitialHeightBasedOnFallingSpeed( scriptInterface, verticalSpeed );
-		}
-		deathLandingHeight = currentPosition.Z - GetStaticFloatParameterDefault( "deathLanding", 1.0 );
-		stateContext.SetPermanentFloatParameter( 'DeathLandingHeight', deathLandingHeight, true );
-	}
-
 	protected override function OnEnter( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
 	{
 		var verticalSpeed : Float;
 		SendSuperHeroLandAnimFeature( scriptInterface, 1 );
 		if( scriptInterface.IsOnGround() )
 		{
-			SetDeathFallHeight( stateContext, scriptInterface, 0.0 );
 			stateContext.SetPermanentBoolParameter( 'groundedGroundSlam', true, true );
 			return;
 		}
 		super.OnEnter( stateContext, scriptInterface );
 		verticalSpeed = GetVerticalSpeed( scriptInterface );
-		SetDeathFallHeight( stateContext, scriptInterface, verticalSpeed );
 		scriptInterface.PushAnimationEvent( 'AirHover' );
 		PlaySound( 'lcm_wallrun_out', scriptInterface );
 		AddUpwardsImpulse( stateContext, scriptInterface, verticalSpeed );
@@ -5083,31 +4974,6 @@ class AirHoverEvents extends LocomotionAirEvents
 
 class SuperheroFallDecisions extends LocomotionAirDecisions
 {
-
-	protected export const override function ToDeathLand( const stateContext : StateContext, const scriptInterface : StateGameScriptInterface ) : Bool
-	{
-		var deathLandingHeight : StateResultFloat;
-		var playerPosition : Vector4;
-		if( !( IsTouchingGround( scriptInterface ) ) )
-		{
-			return false;
-		}
-		deathLandingHeight = stateContext.GetPermanentFloatParameter( 'DeathLandingHeight' );
-		playerPosition = GetPlayerPosition( scriptInterface );
-		if( deathLandingHeight.valid )
-		{
-			if( deathLandingHeight.value > playerPosition.Z )
-			{
-				return true;
-			}
-		}
-		else
-		{
-			return true;
-		}
-		return false;
-	}
-
 }
 
 class SuperheroFallEvents extends LocomotionAirEvents
@@ -5791,10 +5657,12 @@ class DodgeAirEvents extends LocomotionAirEvents
 
 	protected function Dodge( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
 	{
+		var impulseValue : Float;
 		var impulse : Vector4;
 		var dodgeHeading : Float;
+		impulseValue = GetStaticFloatParameterDefault( "impulse", 10.0 );
 		dodgeHeading = stateContext.GetConditionFloat( 'DodgeDirection' );
-		impulse = Vector4.FromHeading( AngleNormalize180( Transform.GetYaw( scriptInterface.GetCameraWorldTransform() ) + dodgeHeading ) ) * 999999.0;
+		impulse = Vector4.FromHeading( AngleNormalize180( Transform.GetYaw( scriptInterface.GetCameraWorldTransform() ) + dodgeHeading ) ) * impulseValue;
 		AddImpulse( stateContext, impulse );
 		SetDetailedState( scriptInterface, gamePSMDetailedLocomotionStates.DodgeAir );
 	}
@@ -6001,62 +5869,6 @@ class RegularLandEvents extends AbstractLandEvents
 			PrepareGameEffectAoEAttack( stateContext, scriptInterface, TweakDBInterface.GetAttackRecord( T"Attacks.PressureWave" ) );
 			SpawnLandingFxGameEffect( T"Attacks.PressureWave", scriptInterface );
 		}
-	}
-
-}
-
-class HardLandDecisions extends FailedLandingAbstractDecisions
-{
-}
-
-class HardLandEvents extends FailedLandingAbstractEvents
-{
-
-	public export override function OnEnter( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		PlayHardLandingEffects( stateContext, scriptInterface );
-		BroadcastLandingStim( stateContext, scriptInterface, gamedataStimType.LandingHard );
-		super.OnEnter( stateContext, scriptInterface );
-		SetDetailedState( scriptInterface, gamePSMDetailedLocomotionStates.HardLand );
-		SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Landing, ( ( Int32 )( gamePSMLandingState.HardLand ) ) );
-	}
-
-}
-
-class VeryHardLandDecisions extends FailedLandingAbstractDecisions
-{
-}
-
-class VeryHardLandEvents extends FailedLandingAbstractEvents
-{
-
-	public override function OnEnter( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		PlayVeryHardLandingEffects( stateContext, scriptInterface );
-		BroadcastLandingStim( stateContext, scriptInterface, gamedataStimType.LandingVeryHard );
-		super.OnEnter( stateContext, scriptInterface );
-		SetDetailedState( scriptInterface, gamePSMDetailedLocomotionStates.VeryHardLand );
-		SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Landing, ( ( Int32 )( gamePSMLandingState.VeryHardLand ) ) );
-		scriptInterface.SetStateVectorParameter( physicsStateValue.LinearVelocity, Vector3() );
-	}
-
-}
-
-class DeathLandDecisions extends FailedLandingAbstractDecisions
-{
-}
-
-class DeathLandEvents extends FailedLandingAbstractEvents
-{
-
-	public override function OnEnter( stateContext : StateContext, scriptInterface : StateGameScriptInterface )
-	{
-		PlayDeathLandingEffects( stateContext, scriptInterface );
-		BroadcastLandingStim( stateContext, scriptInterface, gamedataStimType.LandingVeryHard );
-		super.OnEnter( stateContext, scriptInterface );
-		SetDetailedState( scriptInterface, gamePSMDetailedLocomotionStates.DeathLand );
-		ProcessPermanentBoolParameterToggle( 'WalkToggled', false, stateContext );
-		SetBlackboardIntVariable( scriptInterface, GetAllBlackboardDefs().PlayerStateMachine.Landing, ( ( Int32 )( gamePSMLandingState.DeathLand ) ) );
 	}
 
 }
@@ -7029,3 +6841,4 @@ class FelledEvents extends LocomotionGroundEvents
 	}
 
 }
+

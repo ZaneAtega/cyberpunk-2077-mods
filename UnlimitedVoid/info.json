@@ -1,7 +1,7 @@
 {
-  "name": "Domain Expansion: Unlimited Void",
-  "version": "1.0.0",
-  "customSounds": [
+    "name": "Domain Expansion: Unlimited Void",
+    "version": "1.0.0",
+    "customSounds": [
         {
             "name": "unlimited_void",
             "type": "mod_sfx_2d",
@@ -9,5 +9,5 @@
             "gain": 1.0,
             "pitch": 0.0
         }
-  ]
+    ]
 }
