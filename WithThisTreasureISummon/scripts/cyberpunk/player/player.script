@@ -1520,7 +1520,7 @@ class PlayerPuppet extends ScriptedPuppet
 			adHocAnimEvent = new AdHocAnimationEvent;
 			adHocAnimEvent.unequipWeapon = true;
 			adHocAnimEvent.animationDuration = 2.063;
-			GameInstance.GetPlayerSystem( GetGame() ).GetLocalPlayerMainGameObject().QueueEvent( adHocAnimEvent );
+			GetPlayerObject( GetGame() ).QueueEvent( adHocAnimEvent );
 
 			WorldTransform.SetPosition( transform, GameInstance.GetTargetingSystem( GetGame() ).GetLookAtPosition( this, true, true ) );
 			WorldTransform.SetOrientationFromDir( transform, GetWorldForward() * -1.0 );

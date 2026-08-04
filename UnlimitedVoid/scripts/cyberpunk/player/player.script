@@ -573,6 +573,7 @@ class PlayerPuppet extends ScriptedPuppet
 	private var m_pocketRadio : PocketRadio;
 	private var m_noMovementModifierData : array< gameStatModifierData >;
 	private var m_registeredFactListeners : array< FactCallbackData >;
+	private var m_isUnlimitedVoidInProgress : Bool;
 
 	public const override function IsPlayer() : Bool
 	{
@@ -1481,17 +1482,52 @@ class PlayerPuppet extends ScriptedPuppet
 	private final function UnlimitedVoid()
 	{
 		var adHocAnimEvent : AdHocAnimationEvent;
+		var delaySystem : DelaySystem;
+
+		if( m_isUnlimitedVoidInProgress )
+		{
+			return;
+		}
+
+		m_isUnlimitedVoidInProgress = true;
+
+		GameObject.PlaySound( this, 'unlimited_void' );
+
+		if( !( m_inCrouch ) )
+		{
+			GameObjectEffectHelper.StartEffectEvent( this, 'stealth_mode' );
+		}
+
+		delaySystem = GameInstance.GetDelaySystem( GetGame() );
+		delaySystem.DelayEvent( this, new UnlimitedVoid2Event, 2.868, false );
+		delaySystem.DelayEvent( this, new UnlimitedVoid3Event, 2.853, false );
+
+		adHocAnimEvent = new AdHocAnimationEvent;
+		adHocAnimEvent.unequipWeapon = true;
+		adHocAnimEvent.animationDuration = 3.201;
+		GetPlayerObject( GetGame() ).QueueEvent( adHocAnimEvent );
+	}
+
+	protected event OnUnlimitedVoid2Event( evt: UnlimitedVoid2Event )
+	{
+		if( !( m_inCrouch ) )
+		{
+			GameObjectEffectHelper.BreakEffectLoopEvent( this, 'stealth_mode' );
+		}
+		
+	}
+
+	protected event OnUnlimitedVoid3Event( evt: UnlimitedVoid3Event )
+	{
+		UnlimitedVoid3();
+	}
+
+	private final function UnlimitedVoid3()
+	{
 		var searchQuery : TargetSearchQuery;
 		var targetParts : array< TS_TargetPartInfo >;
 		var i : Int32;
 		var target : GameObject;
-
-		GameObject.PlaySound( this, 'unlimited_void' );
-
-		adHocAnimEvent = new AdHocAnimationEvent;
-		adHocAnimEvent.unequipWeapon = true;
-		adHocAnimEvent.animationDuration = 3.947;
-		GameInstance.GetPlayerSystem( GetGame() ).GetLocalPlayerMainGameObject().QueueEvent( adHocAnimEvent );
 
 		searchQuery.testedSet = TargetingSet.Complete;
 		searchQuery.searchFilter = TSF_NPC();
@@ -1506,6 +1542,8 @@ class PlayerPuppet extends ScriptedPuppet
 			target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity() ) );
 			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.SoMi_Q306_BlackwallHackUpload" );
 		}
+
+		m_isUnlimitedVoidInProgress = false;
 	}
 
 	private function IsPhoneCallActive() : Bool
@@ -7838,4 +7876,12 @@ struct FactCallbackData
 {
 	var m_factName : CName;
 	var m_callbackID : Uint32;
+}
+
+class UnlimitedVoid2Event extends Event
+{
+}
+
+class UnlimitedVoid3Event extends Event
+{
 }
