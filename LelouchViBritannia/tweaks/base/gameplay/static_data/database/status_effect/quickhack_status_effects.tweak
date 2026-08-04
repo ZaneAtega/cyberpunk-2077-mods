@@ -6549,7 +6549,7 @@ SetFriendly : BaseQuickHackStatusEffect
 						nestedPrereqs = 
 						[
 							{
-								duration = 9999.0f;
+								duration = 9999.f;
 							} : Prereqs.DurationPrereq, 
 							{
 								stateName = "Combat";

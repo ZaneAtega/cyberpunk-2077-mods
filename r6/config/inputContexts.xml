@@ -969,6 +969,7 @@
 		<action name="RoyMustang"			map="RoyMustang_Button" />
 		<action name="InstantTransmission"			map="InstantTransmission_Button" />
 		<action name="Mahoraga"			map="Mahoraga_Button" />
+		<action name="MalevolentShrine"			map="MalevolentShrine_Button" />
 	</context>
 
 	<context name="VisionActions" >
@@ -1745,6 +1746,10 @@
 	</acceptedEvents>
 
 	<acceptedEvents action="Mahoraga" >
+		<event name="BUTTON_PRESSED" />
+	</acceptedEvents>
+
+	<acceptedEvents action="MalevolentShrine" >
 		<event name="BUTTON_PRESSED" />
 	</acceptedEvents>
 

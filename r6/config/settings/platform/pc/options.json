@@ -2255,6 +2255,12 @@
                     "display_name": "With This Treasure, I Summon",
                     "order": 45,
                     "is_input": true
+                },
+                {
+                    "name": "malevolentShrine",
+                    "display_name": "Malevolent Shrine",
+                    "order": 46,
+                    "is_input": true
                 }
             ]
         },

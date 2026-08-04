@@ -573,8 +573,8 @@ class PlayerPuppet extends ScriptedPuppet
 	private var m_pocketRadio : PocketRadio;
 	private var m_noMovementModifierData : array< gameStatModifierData >;
 	private var m_registeredFactListeners : array< FactCallbackData >;
-	private var m_isUnlimitedVoidInProgress : Bool;
-	private var m_unlimitedVoidInvulnerability : gameStatModifierData;
+	private var m_isMalevolentShrineInProgress : Bool;
+	private var m_malevolentShrineInvulnerability : gameStatModifierData;
 
 	public const override function IsPlayer() : Bool
 	{
@@ -1179,7 +1179,7 @@ class PlayerPuppet extends ScriptedPuppet
 			RegisterInputListener( this, 'ToggleWalk' );
 			RegisterInputListener( this, 'SceneFastForward' );
 			RegisterInputListener( this, 'PocketRadio' );
-			RegisterInputListener( this, 'UnlimitedVoid' );
+			RegisterInputListener( this, 'MalevolentShrine' );
 			m_Debug_DamageInputRec = new DEBUG_DamageInputReceiver;
 			m_Debug_DamageInputRec.m_player = this;
 			RegisterInputListener( m_Debug_DamageInputRec, 'Debug_KillAll' );
@@ -1382,9 +1382,9 @@ class PlayerPuppet extends ScriptedPuppet
 		{
 			m_pocketRadio.HandleInputAction( action );
 		}
-		else if( ListenerAction.GetName( action ) == 'UnlimitedVoid' )
+		else if( ListenerAction.GetName( action ) == 'MalevolentShrine' )
 		{
-			UnlimitedVoid();
+			MalevolentShrine();
 		}
 	}
 
@@ -1480,52 +1480,56 @@ class PlayerPuppet extends ScriptedPuppet
 		GameInstance.GetUISystem( GetGame() ).QueueEvent( dpadAction );
 	}
 
-	private final function UnlimitedVoid()
+	private final function MalevolentShrine()
 	{
 		var adHocAnimEvent : AdHocAnimationEvent;
 		var delaySystem : DelaySystem;
 
-		if( m_isUnlimitedVoidInProgress )
+		if( m_isMalevolentShrineInProgress )
 		{
 			return;
 		}
 
-		m_isUnlimitedVoidInProgress = true;
+		m_isMalevolentShrineInProgress = true;
 
-		GameObject.PlaySound( this, 'unlimited_void' );
+		GameObject.PlaySound( this, 'malevolent_shrine' );
 
 		if( !( m_inCrouch ) )
 		{
 			GameObjectEffectHelper.StartEffectEvent( this, 'stealth_mode' );
 		}
 
-		m_unlimitedVoidInvulnerability = RPGManager.CreateStatModifier( gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 99999.0 );
-		GameInstance.GetStatsSystem( GetGame() ).AddModifier( GetEntityID(), m_unlimitedVoidInvulnerability );
+		m_malevolentShrineInvulnerability = RPGManager.CreateStatModifier( gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 99999.0 );
+		GameInstance.GetStatsSystem( GetGame() ).AddModifier( GetEntityID(), m_malevolentShrineInvulnerability );
 
 		delaySystem = GameInstance.GetDelaySystem( GetGame() );
-		delaySystem.DelayEvent( this, new UnlimitedVoid2Event, 2.52, false );
-		delaySystem.DelayEvent( this, new UnlimitedVoid3Event, 2.853, false );
+		delaySystem.DelayEvent( this, new MalevolentShrine2Event, 2.402, false );
+		delaySystem.DelayEvent( this, new MalevolentShrine3Event, 3.236, false );
+		delaySystem.DelayEvent( this, new MalevolentShrine4Event, 5.095, false );
+		delaySystem.DelayEvent( this, new MalevolentShrine5Event, 6.348, false );
 
 		adHocAnimEvent = new AdHocAnimationEvent;
 		adHocAnimEvent.unequipWeapon = true;
-		adHocAnimEvent.animationDuration = 3.201;
+		adHocAnimEvent.animationDuration = 4.437;
 		GetPlayerObject( GetGame() ).QueueEvent( adHocAnimEvent );
 	}
 
-	protected event OnUnlimitedVoid2Event( evt: UnlimitedVoid2Event )
+	protected event OnMalevolentShrine2Event( evt: MalevolentShrine2Event )
 	{
 		if( !( m_inCrouch ) )
 		{
 			GameObjectEffectHelper.BreakEffectLoopEvent( this, 'stealth_mode' );
 		}
+
+		GameObjectEffectHelper.StartEffectEvent( this, 'perk_edgerunner' );
 	}
 
-	protected event OnUnlimitedVoid3Event( evt: UnlimitedVoid3Event )
+	protected event OnMalevolentShrine3Event( evt: MalevolentShrine3Event )
 	{
-		UnlimitedVoid3();
+		MalevolentShrine3();
 	}
 
-	private final function UnlimitedVoid3()
+	private final function MalevolentShrine3()
 	{
 		var searchQuery : TargetSearchQuery;
 		var targetParts : array< TS_TargetPartInfo >;
@@ -1534,7 +1538,7 @@ class PlayerPuppet extends ScriptedPuppet
 
 		searchQuery.testedSet = TargetingSet.Complete;
 		searchQuery.searchFilter = TSF_NPC();
-		searchQuery.maxDistance = 100.0;
+		searchQuery.maxDistance = 50.0;
 		searchQuery.filterObjectByDistance = true;
 		searchQuery.includeSecondaryTargets = true;
 		searchQuery.ignoreInstigator = true;
@@ -1543,11 +1547,43 @@ class PlayerPuppet extends ScriptedPuppet
 		for( i = 0; i < targetParts.Size(); i += 1 )
 		{
 			target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity() ) );
-			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.SoMi_Q306_BlackwallHackUpload" );
+			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.DeviceTrapHit" );
 		}
+	}
 
-		GameInstance.GetStatsSystem( GetGame() ).RemoveModifier( GetEntityID(), m_unlimitedVoidInvulnerability );
-		m_isUnlimitedVoidInProgress = false;
+	protected event OnMalevolentShrine4Event( evt: MalevolentShrine4Event )
+	{
+		MalevolentShrine4();
+	}
+
+	private final function MalevolentShrine4()
+	{
+		var searchQuery : TargetSearchQuery;
+		var targetParts : array< TS_TargetPartInfo >;
+		var i : Int32;
+		var target : GameObject;
+
+		searchQuery.testedSet = TargetingSet.Complete;
+		searchQuery.searchFilter = TSF_NPC();
+		searchQuery.maxDistance = 50.0;
+		searchQuery.filterObjectByDistance = true;
+		searchQuery.includeSecondaryTargets = true;
+		searchQuery.ignoreInstigator = true;
+		GameInstance.GetTargetingSystem( GetGame() ).GetTargetParts( this, searchQuery, targetParts );
+
+		for( i = 0; i < targetParts.Size(); i += 1 )
+		{
+			target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity() ) );
+			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.MantisBladesInstantDismembermentSpyBuff" );
+			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.ForceKill" );
+		}
+	}
+
+	protected event OnMalevolentShrine5Event( evt: MalevolentShrine5Event )
+	{
+		GameObjectEffectHelper.BreakEffectLoopEvent( this, 'perk_edgerunner' );
+		GameInstance.GetStatsSystem( GetGame() ).RemoveModifier( GetEntityID(), m_malevolentShrineInvulnerability );
+		m_isMalevolentShrineInProgress = false;
 	}
 
 	private function IsPhoneCallActive() : Bool
@@ -7882,10 +7918,18 @@ struct FactCallbackData
 	var m_callbackID : Uint32;
 }
 
-class UnlimitedVoid2Event extends Event
+class MalevolentShrine2Event extends Event
 {
 }
 
-class UnlimitedVoid3Event extends Event
+class MalevolentShrine3Event extends Event
+{
+}
+
+class MalevolentShrine4Event extends Event
+{
+}
+
+class MalevolentShrine5Event extends Event
 {
 }
