@@ -1506,7 +1506,7 @@ class PlayerPuppet extends ScriptedPuppet
 		delaySystem.DelayEvent( this, new MalevolentShrine2Event, 2.402, false );
 		delaySystem.DelayEvent( this, new MalevolentShrine3Event, 3.236, false );
 		delaySystem.DelayEvent( this, new MalevolentShrine4Event, 5.095, false );
-		delaySystem.DelayEvent( this, new MalevolentShrine5Event, 6.348, false );
+		delaySystem.DelayEvent( this, new MalevolentShrine5Event, 5.265, false );
 
 		adHocAnimEvent = new AdHocAnimationEvent;
 		adHocAnimEvent.unequipWeapon = true;
