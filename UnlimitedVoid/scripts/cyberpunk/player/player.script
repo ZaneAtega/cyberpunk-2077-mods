@@ -1499,7 +1499,11 @@ class PlayerPuppet extends ScriptedPuppet
 			GameObjectEffectHelper.StartEffectEvent( this, 'stealth_mode' );
 		}
 
-		m_unlimitedVoidInvulnerability = RPGManager.CreateStatModifier( gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 99999.0 );
+		if( !( m_unlimitedVoidInvulnerability ) )
+		{
+			m_unlimitedVoidInvulnerability = RPGManager.CreateStatModifier( gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 99999.0 );
+		}
+
 		GameInstance.GetStatsSystem( GetGame() ).AddModifier( GetEntityID(), m_unlimitedVoidInvulnerability );
 
 		delaySystem = GameInstance.GetDelaySystem( GetGame() );

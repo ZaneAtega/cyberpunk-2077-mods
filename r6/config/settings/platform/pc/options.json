@@ -2261,6 +2261,12 @@
                     "display_name": "Malevolent Shrine",
                     "order": 46,
                     "is_input": true
+                },
+                {
+                    "name": "echoesAct3",
+                    "display_name": "Echoes Act 3",
+                    "order": 47,
+                    "is_input": true
                 }
             ]
         },

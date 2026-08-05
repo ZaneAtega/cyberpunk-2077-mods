@@ -573,9 +573,8 @@ class PlayerPuppet extends ScriptedPuppet
 	private var m_pocketRadio : PocketRadio;
 	private var m_noMovementModifierData : array< gameStatModifierData >;
 	private var m_registeredFactListeners : array< FactCallbackData >;
-	private var m_isMahoragaVFXActive : Bool;
-	private var m_mahoragaChantDelayID : DelayID;
-	private var m_isSmasherMusicPlaying : Bool;
+	private var m_isThreeFreezeInProgress : Bool;
+	private var m_threeFreezeInvulnerability : gameStatModifierData;
 
 	public const override function IsPlayer() : Bool
 	{
@@ -1180,7 +1179,7 @@ class PlayerPuppet extends ScriptedPuppet
 			RegisterInputListener( this, 'ToggleWalk' );
 			RegisterInputListener( this, 'SceneFastForward' );
 			RegisterInputListener( this, 'PocketRadio' );
-			RegisterInputListener( this, 'Mahoraga' );
+			RegisterInputListener( this, 'EchoesAct3' );
 			m_Debug_DamageInputRec = new DEBUG_DamageInputReceiver;
 			m_Debug_DamageInputRec.m_player = this;
 			RegisterInputListener( m_Debug_DamageInputRec, 'Debug_KillAll' );
@@ -1383,9 +1382,9 @@ class PlayerPuppet extends ScriptedPuppet
 		{
 			m_pocketRadio.HandleInputAction( action );
 		}
-		else if( ListenerAction.GetName( action ) == 'Mahoraga' )
+		else if( ListenerAction.GetName( action ) == 'EchoesAct3' )
 		{
-			Mahoraga();
+			ThreeFreeze0();
 		}
 	}
 
@@ -1481,66 +1480,108 @@ class PlayerPuppet extends ScriptedPuppet
 		GameInstance.GetUISystem( GetGame() ).QueueEvent( dpadAction );
 	}
 
-	private final function Mahoraga()
+	private final function ThreeFreeze0()
 	{
-		var target : GameObject;
-		var delaySystem : DelaySystem;
-		var adHocAnimEvent : AdHocAnimationEvent;
-		var transform : WorldTransform;
+		if( m_isThreeFreezeInProgress )
+		{
+			return;
+		}
 
+		m_isThreeFreezeInProgress = true;
+
+		if( !( m_threeFreezeInvulnerability ) )
+		{
+			m_threeFreezeInvulnerability = RPGManager.CreateStatModifier( gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 99999.0 );
+		}
+
+		GameObject.PlaySound( this, 'three_freeze' );
+		GameInstance.GetStatsSystem( GetGame() ).AddModifier( GetEntityID(), m_threeFreezeInvulnerability );
+		GameInstance.GetDelaySystem( GetGame() ).DelayEvent( this, new ThreeFreezeEvent, 1.543, false );
+	}
+
+	protected event OnThreeFreezeEvent( evt: ThreeFreezeEvent )
+	{
+		ThreeFreeze();
+	}
+
+	private final function ThreeFreeze()
+	{
+		var searchQuery : TargetSearchQuery;
+		var targetParts : array< TS_TargetPartInfo >;
+		var statsSystem : StatsSystem;
+		var knockdownImmunityModifier : gameStatModifierData;
+		var i : Int32;
+		var targetEntity : Entity;
+		var targetID : EntityID;
+		var playerObject : GameObject;
+		var attackContext : AttackInitContext;
+		var attack : Attack_GameEffect;
+		var effect : EffectInstance;
+		var effectData : EffectData;
+		var effectSharedDataDef : EffectSharedDataDef;
+		var attackRadius : Float;
+		var statMods : array< gameStatModifierData >;
+		var target : GameObject;
+
+		searchQuery.testedSet = TargetingSet.Complete;
+		searchQuery.searchFilter = TSF_NPC();
+		searchQuery.maxDistance = 50.0;
+		searchQuery.filterObjectByDistance = true;
+		searchQuery.includeSecondaryTargets = true;
+		searchQuery.ignoreInstigator = true;
+		GameInstance.GetTargetingSystem( GetGame() ).GetTargetParts( this, searchQuery, targetParts );
+
+		if( targetParts.Size() < 1 )
+		{
+			return;
+		}
+
+		statsSystem = GameInstance.GetStatsSystem( GetGame() );
+		knockdownImmunityModifier = RPGManager.CreateStatModifier( gamedataStatType.KnockdownImmunity, gameStatModifierType.Multiplier, 0.0 );
+
+		for( i = 0; i < targetParts.Size(); i += 1 )
+		{
+			targetEntity = TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity();
+			targetID = targetEntity.GetEntityID();
+
+			statsSystem.RemoveAllModifiers( targetID, gamedataStatType.KnockdownImmunity, true );
+			statsSystem.RemoveAllModifiers( targetID, gamedataStatType.KnockdownImmunity, false );
+			statsSystem.AddModifier( targetID, knockdownImmunityModifier );
+		}
+
+		playerObject = GetPlayerObject( GetGame() );
+
+		attackContext.record = TweakDBInterface.GetAttackRecord( T"Attacks.GroundSlamNear" );
+		attackContext.instigator = playerObject;
+		attackContext.source = playerObject;
+		attack = ( ( Attack_GameEffect )( IAttack.Create( attackContext ) ) );
+
+		effect = attack.PrepareAttack( playerObject );
+		effectData = effect.GetSharedData();
+		effectSharedDataDef = GetAllBlackboardDefs().EffectSharedData;
+
+		attackRadius = 50.0;
+		attack.GetStatModList( statMods );
 		target = GameInstance.GetTargetingSystem( GetGame() ).GetLookAtObject( this, true, true );
 
-		if( target && ( ( NPCPuppet )( target ) ).GetRecordID() == T"Character.main_boss_adam_smasher" )
+		if( !( target ) )
 		{
-			StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.SetFriendly" );
+			target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ 0 ] ).GetEntity() ) );
 		}
-		else
-		{
-			GameObject.PlaySound( this, 'with_this_treasure_i_summon' );
 
-			m_isMahoragaVFXActive = m_inCrouch;
+		EffectData.SetFloat( effectData, effectSharedDataDef.duration, 0.0001 );
+		EffectData.SetFloat( effectData, effectSharedDataDef.range, attackRadius );
+		EffectData.SetFloat( effectData, effectSharedDataDef.radius, attackRadius );
+		EffectData.SetFloat( effectData, effectSharedDataDef.height, 20.0 );
+		EffectData.SetFloat( effectData, effectSharedDataDef.charge, 1.0 );
+		EffectData.SetVariant( effectData, effectSharedDataDef.attack, ( ( IAttack )( attack ) ) );
+		EffectData.SetVariant( effectData, effectSharedDataDef.attackStatModList, statMods );
+		EffectData.SetVector( effectData, effectSharedDataDef.position, target.GetWorldPosition() );
 
-			if( !( m_isMahoragaVFXActive ) )
-			{
-				GameObjectEffectHelper.StartEffectEvent( this, 'stealth_mode' );
-				m_isMahoragaVFXActive = true;
-			}
+		attack.StartAttack();
 
-			delaySystem = GameInstance.GetDelaySystem( GetGame() );
-			delaySystem.CancelDelay( m_mahoragaChantDelayID );
-			m_mahoragaChantDelayID = delaySystem.DelayEvent( this, new MahoragaChantFinishedEvent, 2.73, false );
-
-			if( !( m_isSmasherMusicPlaying ) )
-			{
-				GameObject.PlaySound( this, 'adam_smasher' );
-				m_isSmasherMusicPlaying = true;
-				delaySystem.DelayEvent( this, new SmasherMusicFinishedEvent, 98.835, false );
-			}
-
-			adHocAnimEvent = new AdHocAnimationEvent;
-			adHocAnimEvent.unequipWeapon = true;
-			adHocAnimEvent.animationDuration = 2.063;
-			GetPlayerObject( GetGame() ).QueueEvent( adHocAnimEvent );
-
-			WorldTransform.SetPosition( transform, GameInstance.GetTargetingSystem( GetGame() ).GetLookAtPosition( this, true, true ) );
-			WorldTransform.SetOrientationFromDir( transform, GetWorldForward() * -1.0 );
-			GameInstance.GetPreventionSpawnSystem( GetGame() ).RequestUnitSpawn( T"Character.main_boss_adam_smasher", transform );
-		}
-	}
-
-	protected event OnMahoragaChantFinishedEvent( evt: MahoragaChantFinishedEvent )
-	{
-		m_isMahoragaVFXActive = false;
-
-		if( !( m_inCrouch ) )
-		{
-			GameObjectEffectHelper.BreakEffectLoopEvent( this, 'stealth_mode' );
-		}
-	}
-
-	protected event OnSmasherMusicFinishedEvent( evt: SmasherMusicFinishedEvent )
-	{
-		m_isSmasherMusicPlaying = false;
+		GameInstance.GetStatsSystem( GetGame() ).RemoveModifier( GetEntityID(), m_threeFreezeInvulnerability );
+		m_isThreeFreezeInProgress = false;
 	}
 
 	private function IsPhoneCallActive() : Bool
@@ -7875,10 +7916,6 @@ struct FactCallbackData
 	var m_callbackID : Uint32;
 }
 
-class MahoragaChantFinishedEvent extends Event
-{
-}
-
-class SmasherMusicFinishedEvent extends Event
+class ThreeFreezeEvent extends Event
 {
 }

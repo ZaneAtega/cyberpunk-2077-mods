@@ -807,6 +807,10 @@
 	<mapping name="MalevolentShrine_Button" type="Button" >
 		<button id="IK_F7" overridableUI="malevolentShrine"/>
 	</mapping>
+
+	<mapping name="EchoesAct3_Button" type="Button" >
+		<button id="IK_F8" overridableUI="echoesAct3"/>
+	</mapping>
 	
 	<!-- BUTTON COMBO GROUPS -->
 	<!-- has time timeWindow during which the combo can be activated ( default param. =  0.1f )
