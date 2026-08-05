@@ -1504,7 +1504,7 @@ class PlayerPuppet extends ScriptedPuppet
 
 		delaySystem = GameInstance.GetDelaySystem( GetGame() );
 		delaySystem.DelayEvent( this, new MalevolentShrine2Event, 2.402, false );
-		delaySystem.DelayEvent( this, new MalevolentShrine3Event, 3.236, false );
+		delaySystem.DelayEvent( this, new MalevolentShrine3Event, 3.868, false );
 		delaySystem.DelayEvent( this, new MalevolentShrine4Event, 5.095, false );
 		delaySystem.DelayEvent( this, new MalevolentShrine5Event, 5.265, false );
 
