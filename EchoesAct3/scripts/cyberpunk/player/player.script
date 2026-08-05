@@ -1511,7 +1511,6 @@ class PlayerPuppet extends ScriptedPuppet
 		var statsSystem : StatsSystem;
 		var knockdownImmunityModifier : gameStatModifierData;
 		var i : Int32;
-		var targetEntity : Entity;
 		var targetID : EntityID;
 		var playerObject : GameObject;
 		var attackContext : AttackInitContext;
@@ -1541,9 +1540,7 @@ class PlayerPuppet extends ScriptedPuppet
 
 		for( i = 0; i < targetParts.Size(); i += 1 )
 		{
-			targetEntity = TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity();
-			targetID = targetEntity.GetEntityID();
-
+			targetID = TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity().GetEntityID();
 			statsSystem.RemoveAllModifiers( targetID, gamedataStatType.KnockdownImmunity, true );
 			statsSystem.RemoveAllModifiers( targetID, gamedataStatType.KnockdownImmunity, false );
 			statsSystem.AddModifier( targetID, knockdownImmunityModifier );
