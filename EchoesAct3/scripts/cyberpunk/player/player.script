@@ -1512,7 +1512,6 @@ class PlayerPuppet extends ScriptedPuppet
 		var knockdownImmunityModifier : gameStatModifierData;
 		var i : Int32;
 		var targetID : EntityID;
-		var playerObject : GameObject;
 		var attackContext : AttackInitContext;
 		var attack : Attack_GameEffect;
 		var effect : EffectInstance;
@@ -1546,14 +1545,12 @@ class PlayerPuppet extends ScriptedPuppet
 			statsSystem.AddModifier( targetID, knockdownImmunityModifier );
 		}
 
-		playerObject = GetPlayerObject( GetGame() );
-
 		attackContext.record = TweakDBInterface.GetAttackRecord( T"Attacks.GroundSlamNear" );
-		attackContext.instigator = playerObject;
-		attackContext.source = playerObject;
+		attackContext.instigator = this;
+		attackContext.source = this;
 		attack = ( ( Attack_GameEffect )( IAttack.Create( attackContext ) ) );
 
-		effect = attack.PrepareAttack( playerObject );
+		effect = attack.PrepareAttack( this );
 		effectData = effect.GetSharedData();
 		effectSharedDataDef = GetAllBlackboardDefs().EffectSharedData;
 

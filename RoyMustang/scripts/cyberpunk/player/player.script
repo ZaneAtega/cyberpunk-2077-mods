@@ -1491,7 +1491,7 @@ class PlayerPuppet extends ScriptedPuppet
 		adHocAnimEvent = new AdHocAnimationEvent;
 		adHocAnimEvent.unequipWeapon = true;
 		adHocAnimEvent.animationDuration = 0.0001;
-		GetPlayerObject( GetGame() ).QueueEvent( adHocAnimEvent );
+		QueueEvent( adHocAnimEvent );
 
 		searchQuery.testedSet = TargetingSet.Complete;
 		searchQuery.searchFilter = TSF_Any( TSFMV.St_Alive );

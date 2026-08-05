@@ -1515,7 +1515,7 @@ class PlayerPuppet extends ScriptedPuppet
 		adHocAnimEvent = new AdHocAnimationEvent;
 		adHocAnimEvent.unequipWeapon = true;
 		adHocAnimEvent.animationDuration = 4.437;
-		GetPlayerObject( GetGame() ).QueueEvent( adHocAnimEvent );
+		QueueEvent( adHocAnimEvent );
 	}
 
 	protected event OnMalevolentShrine2Event( evt: MalevolentShrine2Event )
