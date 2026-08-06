@@ -1507,23 +1507,31 @@ class PlayerPuppet extends ScriptedPuppet
 	private final function ThreeFreeze()
 	{
 		var searchQuery : TargetSearchQuery;
+		var attackRadius : Float;
 		var targetParts : array< TS_TargetPartInfo >;
 		var statsSystem : StatsSystem;
 		var knockdownImmunityModifier : gameStatModifierData;
 		var i : Int32;
+		var targetEntity : Entity;
+		var targetPuppet : ScriptedPuppet;
+		var npcType : gamedataNPCType;
+		var target : GameObject;
 		var targetID : EntityID;
 		var attackContext : AttackInitContext;
 		var attack : Attack_GameEffect;
 		var effect : EffectInstance;
 		var effectData : EffectData;
 		var effectSharedDataDef : EffectSharedDataDef;
-		var attackRadius : Float;
 		var statMods : array< gameStatModifierData >;
-		var target : GameObject;
+		var lookAtPosition : Vector4;
+
+		GameInstance.GetStatsSystem( GetGame() ).RemoveModifier( GetEntityID(), m_threeFreezeInvulnerability );
+		m_isThreeFreezeInProgress = false;
 
 		searchQuery.testedSet = TargetingSet.Complete;
 		searchQuery.searchFilter = TSF_NPC();
-		searchQuery.maxDistance = 50.0;
+		attackRadius = 20.0;
+		searchQuery.maxDistance = attackRadius;
 		searchQuery.filterObjectByDistance = true;
 		searchQuery.includeSecondaryTargets = true;
 		searchQuery.ignoreInstigator = true;
@@ -1539,10 +1547,26 @@ class PlayerPuppet extends ScriptedPuppet
 
 		for( i = 0; i < targetParts.Size(); i += 1 )
 		{
-			targetID = TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity().GetEntityID();
+			targetEntity = TS_TargetPartInfo.GetComponent( targetParts[ i ] ).GetEntity();
+			targetPuppet = ( ( ScriptedPuppet )( targetEntity ) );
+			npcType = targetPuppet.GetNPCType();
+			target = ( ( GameObject )( targetEntity ) );
+
+			if( npcType == gamedataNPCType.Mech || npcType == gamedataNPCType.Drone )
+			{
+				StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.ForceKill" );
+				break;
+			}
+
+			targetID = targetEntity.GetEntityID();
 			statsSystem.RemoveAllModifiers( targetID, gamedataStatType.KnockdownImmunity, true );
 			statsSystem.RemoveAllModifiers( targetID, gamedataStatType.KnockdownImmunity, false );
 			statsSystem.AddModifier( targetID, knockdownImmunityModifier );
+
+			if( targetPuppet.GetNPCRarity() == gamedataNPCRarity.Trash || StatusEffectSystem.ObjectHasStatusEffectOfType( target, gamedataStatusEffectType.Knockdown ) || TweakDBInterface.GetCharacterRecord( targetPuppet.GetRecordID() ).Affiliation().Type() == gamedataAffiliation.NCPD )
+			{
+				StatusEffectHelper.ApplyStatusEffect( target, T"BaseStatusEffect.KnockdownInfinite" );
+			}
 		}
 
 		attackContext.record = TweakDBInterface.GetAttackRecord( T"Attacks.GroundSlamNear" );
@@ -1554,28 +1578,38 @@ class PlayerPuppet extends ScriptedPuppet
 		effectData = effect.GetSharedData();
 		effectSharedDataDef = GetAllBlackboardDefs().EffectSharedData;
 
-		attackRadius = 50.0;
-		attack.GetStatModList( statMods );
-		target = GameInstance.GetTargetingSystem( GetGame() ).GetLookAtObject( this, true, true );
-
-		if( !( target ) )
-		{
-			target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ 0 ] ).GetEntity() ) );
-		}
-
 		EffectData.SetFloat( effectData, effectSharedDataDef.duration, 0.0001 );
 		EffectData.SetFloat( effectData, effectSharedDataDef.range, attackRadius );
 		EffectData.SetFloat( effectData, effectSharedDataDef.radius, attackRadius );
 		EffectData.SetFloat( effectData, effectSharedDataDef.height, 20.0 );
 		EffectData.SetFloat( effectData, effectSharedDataDef.charge, 1.0 );
 		EffectData.SetVariant( effectData, effectSharedDataDef.attack, ( ( IAttack )( attack ) ) );
+
+		attack.GetStatModList( statMods );
 		EffectData.SetVariant( effectData, effectSharedDataDef.attackStatModList, statMods );
-		EffectData.SetVector( effectData, effectSharedDataDef.position, target.GetWorldPosition() );
+
+		target = GameInstance.GetTargetingSystem( GetGame() ).GetLookAtObject( this, true, true );
+
+		if( target )
+		{
+			EffectData.SetVector( effectData, effectSharedDataDef.position, target.GetWorldPosition() );
+		}
+		else
+		{
+			lookAtPosition = GameInstance.GetTargetingSystem( GetGame() ).GetLookAtPosition( this, true, true );
+
+			if( Vector4.Distance( GetWorldPosition(), lookAtPosition ) < attackRadius )
+			{
+				EffectData.SetVector( effectData, effectSharedDataDef.position, lookAtPosition );
+			}
+			else
+			{
+				target = ( ( GameObject )( TS_TargetPartInfo.GetComponent( targetParts[ 0 ] ).GetEntity() ) );
+				EffectData.SetVector( effectData, effectSharedDataDef.position, target.GetWorldPosition() );
+			}
+		}
 
 		attack.StartAttack();
-
-		GameInstance.GetStatsSystem( GetGame() ).RemoveModifier( GetEntityID(), m_threeFreezeInvulnerability );
-		m_isThreeFreezeInProgress = false;
 	}
 
 	private function IsPhoneCallActive() : Bool
