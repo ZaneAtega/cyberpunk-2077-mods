@@ -1,0 +1,34 @@
+{
+    "name": "Killer Queen",
+    "version": "1.0.0",
+    "customSounds": [
+        {
+            "name": "killer_queen",
+            "type": "mod_sfx_2d",
+            "file": "killer_queen.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
+            "name": "another_one_bites_the_dust",
+            "type": "mod_sfx_2d",
+            "file": "another_one_bites_the_dust.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
+            "name": "killer_queen_explode",
+            "type": "mod_sfx_2d",
+            "file": "killer_queen_explode.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        },
+        {
+            "name": "killer",
+            "type": "mod_sfx_2d",
+            "file": "killer.wav",
+            "gain": 1.0,
+            "pitch": 0.0
+        }
+    ]
+}

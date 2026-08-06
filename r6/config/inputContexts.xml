@@ -971,6 +971,7 @@
 		<action name="Mahoraga"			map="Mahoraga_Button" />
 		<action name="MalevolentShrine"			map="MalevolentShrine_Button" />
 		<action name="EchoesAct3"			map="EchoesAct3_Button" />
+		<action name="KillerQueen"			map="KillerQueen_Button" />
 	</context>
 
 	<context name="VisionActions" >
@@ -1755,6 +1756,10 @@
 	</acceptedEvents>
 
 	<acceptedEvents action="EchoesAct3" >
+		<event name="BUTTON_PRESSED" />
+	</acceptedEvents>
+
+	<acceptedEvents action="KillerQueen" >
 		<event name="BUTTON_PRESSED" />
 	</acceptedEvents>
 

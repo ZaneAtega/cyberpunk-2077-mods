@@ -1578,7 +1578,6 @@ class PlayerPuppet extends ScriptedPuppet
 		effectData = effect.GetSharedData();
 		effectSharedDataDef = GetAllBlackboardDefs().EffectSharedData;
 
-		EffectData.SetFloat( effectData, effectSharedDataDef.duration, 0.0001 );
 		EffectData.SetFloat( effectData, effectSharedDataDef.range, attackRadius );
 		EffectData.SetFloat( effectData, effectSharedDataDef.radius, attackRadius );
 		EffectData.SetFloat( effectData, effectSharedDataDef.height, 20.0 );

@@ -811,6 +811,10 @@
 	<mapping name="EchoesAct3_Button" type="Button" >
 		<button id="IK_F8" overridableUI="echoesAct3"/>
 	</mapping>
+
+	<mapping name="KillerQueen_Button" type="Button" >
+		<button id="IK_F10" overridableUI="killerQueen"/>
+	</mapping>
 	
 	<!-- BUTTON COMBO GROUPS -->
 	<!-- has time timeWindow during which the combo can be activated ( default param. =  0.1f )

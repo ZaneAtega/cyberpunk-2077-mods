@@ -2267,6 +2267,12 @@
                     "display_name": "Echoes Act 3",
                     "order": 47,
                     "is_input": true
+                },
+                {
+                    "name": "killerQueen",
+                    "display_name": "Killer Queen",
+                    "order": 48,
+                    "is_input": true
                 }
             ]
         },
