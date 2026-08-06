@@ -1,0 +1,3 @@
+*.script linguist-language=Witcher-Script
+*.xml linguist-language=XML
+*.py linguist-language=Python
